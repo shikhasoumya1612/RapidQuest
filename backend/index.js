@@ -57,7 +57,14 @@ app.get("/api/v1/sales", async (req, res) => {
             totalSales: { $sum: "$total_price_set.shop_money.amount" },
           },
         },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1,
+            "_id.day": 1,
+            "_id.quarter": 1,
+          },
+        },
       ])
       .toArray();
 
@@ -90,7 +97,14 @@ app.get("/api/v1/salesgrowth", async (req, res) => {
             totalSales: { $sum: "$total_price_set.shop_money.amount" },
           },
         },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1,
+            "_id.day": 1,
+            "_id.quarter": 1,
+          },
+        },
       ])
       .toArray();
 
@@ -132,7 +146,14 @@ app.get("/api/v1/newcustomers", async (req, res) => {
             count: { $sum: 1 },
           },
         },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1,
+            "_id.day": 1,
+            "_id.quarter": 1,
+          },
+        },
       ])
       .toArray();
 
@@ -172,7 +193,14 @@ app.get("/api/v1/repeatcustomers", async (req, res) => {
             repeatCustomers: { $sum: 1 },
           },
         },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+        {
+          $sort: {
+            "_id.year": 1,
+            "_id.month": 1,
+            "_id.day": 1,
+            "_id.quarter": 1,
+          },
+        },
       ])
       .toArray();
 
