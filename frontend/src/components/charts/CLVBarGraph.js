@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import "../ui/Dropdown/Dropdown.css";
 import { convertMonthIndexToAbbreviation } from "../../utils";
+import Loader from "../ui/Loader/Loader";
 
 ChartJS.register(
   CategoryScale,
@@ -24,6 +25,7 @@ ChartJS.register(
 
 const TotalLifetimeAmountBarChart = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const formatCurrencyINR = (amount) => {
     return amount.toLocaleString("en-IN");
@@ -31,6 +33,7 @@ const TotalLifetimeAmountBarChart = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           "https://rapidquest-4vwc.onrender.com/api/v1/clvByMonth"
@@ -38,6 +41,8 @@ const TotalLifetimeAmountBarChart = () => {
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -109,7 +114,7 @@ const TotalLifetimeAmountBarChart = () => {
   return (
     <div>
       <h2>Total Lifetime Amount by Month</h2>
-      <Bar data={chartData} options={options} />
+      {loading ? <Loader /> : <Bar data={chartData} options={options} />}
     </div>
   );
 };

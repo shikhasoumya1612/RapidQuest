@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import "../ui/Dropdown/Dropdown.css";
 import { convertMonthIndexToAbbreviation } from "../../utils";
+import Loader from "../ui/Loader/Loader";
 
 ChartJS.register(
   CategoryScale,
@@ -25,9 +26,11 @@ ChartJS.register(
 const RepeatCustomersBarChart = () => {
   const [repeatCustomerData, setRepeatCustomerData] = useState([]);
   const [interval, setInterval] = useState("quarterly");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `https://rapidquest-4vwc.onrender.com/api/v1/repeatcustomers?interval=${interval}`
@@ -35,6 +38,8 @@ const RepeatCustomersBarChart = () => {
         setRepeatCustomerData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -120,7 +125,7 @@ const RepeatCustomersBarChart = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-500px">
       <h2>Repeat Customers Data</h2>
       <div className="dropdown-container">
         <label htmlFor="interval" className="dropdown-label">
@@ -138,7 +143,7 @@ const RepeatCustomersBarChart = () => {
           <option value="daily">Daily</option>
         </select>
       </div>
-      <Bar data={data} options={options} />
+      {loading ? <Loader /> : <Bar data={data} options={options} />}
     </div>
   );
 };

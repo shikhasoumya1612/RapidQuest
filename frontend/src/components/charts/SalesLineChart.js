@@ -133,7 +133,7 @@ const SalesLineChart = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-500px">
       <h2>Sales Data</h2>
       <div className="dropdown-container">
         <label htmlFor="interval" className="dropdown-label">

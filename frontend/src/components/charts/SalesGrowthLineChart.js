@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import { convertMonthIndexToAbbreviation } from "../../utils";
 import "../ui/Dropdown/Dropdown.css";
+import Loader from "../ui/Loader/Loader";
 
 ChartJS.register(
   CategoryScale,
@@ -29,9 +30,11 @@ const formatPercentage = (value) => value.toFixed(2) + "%";
 const SalesGrowthLineChart = () => {
   const [growthData, setGrowthData] = useState([]);
   const [interval, setInterval] = useState("quarterly");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `https://rapidquest-4vwc.onrender.com/api/v1/salesgrowth?interval=${interval}`
@@ -39,6 +42,8 @@ const SalesGrowthLineChart = () => {
         setGrowthData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -123,7 +128,7 @@ const SalesGrowthLineChart = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-500px">
       <h2>Sales Growth Rate</h2>
       <div className="dropdown-container">
         <label htmlFor="interval" className="dropdown-label">
@@ -141,7 +146,8 @@ const SalesGrowthLineChart = () => {
           <option value="daily">Daily</option>
         </select>
       </div>
-      <Line data={data} options={options} />
+
+      {loading ? <Loader /> : <Line data={data} options={options} />}
     </div>
   );
 };

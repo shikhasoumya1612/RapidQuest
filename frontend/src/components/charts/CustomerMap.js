@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import axios from "axios";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import Loader from "../ui/Loader/Loader";
 
 const customIcon = new L.Icon({
   iconUrl:
@@ -25,9 +26,11 @@ const center = [39.8283, -98.5795];
 const CustomerMap = () => {
   const [locations, setLocations] = useState([]);
   const [coordinates, setCoordinates] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           "https://rapidquest-4vwc.onrender.com/api/v1/customerDistribution"
@@ -59,6 +62,8 @@ const CustomerMap = () => {
         localStorage.setItem("coords", JSON.stringify(updatedCoords));
       } catch (error) {
         console.error("Error fetching the data", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -66,36 +71,39 @@ const CustomerMap = () => {
   }, []);
 
   return (
-    <MapContainer
-      center={center}
-      zoom={4}
-      style={{ height: "600px", width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {locations.map((location) => {
-        const { _id: city } = location;
-        const coord = coordinates[city];
-        if (!coord) return null;
+    <div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <MapContainer
+          center={center}
+          zoom={4}
+          style={{ height: "600px", width: "100%" }}
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {locations.map((location) => {
+            const { _id: city } = location;
+            const coord = coordinates[city];
+            if (!coord) return null;
 
-        return (
-          <Marker
-            key={city}
-            position={[coord.lat, coord.lng]}
-            icon={customIcon}
-          >
-            <Popup>
-              <div>
-                <h4>{city}</h4>
-                <p>Count: {location.count}</p>
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
-    </MapContainer>
+            return (
+              <Marker
+                key={city}
+                position={[coord.lat, coord.lng]}
+                icon={customIcon}
+              >
+                <Popup>
+                  <div>
+                    <h4>{city}</h4>
+                    <p>Count: {location.count}</p>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
+        </MapContainer>
+      )}
+    </div>
   );
 };
 
